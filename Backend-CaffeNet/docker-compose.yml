@@ -2,37 +2,34 @@ version: '3.8'
 
 services:
   app:
-    build: .                 # Construye la imagen desde tu Dockerfile en el backend
-    image: backendcaffenet   # Nombre local de la imagen
-    container_name: backend-app
+    build: .           # Construye la imagen localmente desde el Dockerfile en este directorio
+    image: backendcaffenet        # Nombre de la imagen local construida
     ports:
-      - "8090:8082"          # Mapea el puerto externo 8090 al puerto interno del backend
+      - "8090:8082"     # Puerto mapeado (8090 en el host, 8082 en el contenedor)
     depends_on:
-      - db
+      - mysql-db         # Asegura que el contenedor de base de datos se inicie primero
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3308/CaffeNet
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/CaffeNet  # Se conecta al contenedor de MySQL
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: abcd1234
     networks:
       - backendnet
 
-  db:
-    image: mysql:8
-    container_name: mysql-db
+  mysql-db:
+    image: mysql:8      # Usamos la imagen oficial de MySQL
     environment:
-      MYSQL_DATABASE: CaffeNet
-      MYSQL_USER: root
-      MYSQL_PASSWORD: abcd1234
-      MYSQL_ROOT_PASSWORD: abcd1234
+      MYSQL_ROOT_PASSWORD: abcd1234   # La contraseña para el usuario root
+      MYSQL_DATABASE: CaffeNet         # Nombre de la base de datos
     ports:
-      - "3308:3306"           # MySQL accesible desde localhost:3308
+      - "3008:3306"      # Exponemos el puerto 3308 en el host, 3306 dentro del contenedor
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql  # Volumen persistente para la base de datos
     networks:
       - backendnet
 
 volumes:
-  mysql_data:
+  mysql-data:
 
 networks:
   backendnet:
+    driver: bridge
