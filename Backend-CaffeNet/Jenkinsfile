@@ -1,0 +1,63 @@
+//Jenkinsfile corregido
+pipeline {
+    agent any
+    stages {
+        stage('Clonar') {
+            steps {
+                git branch: 'main', url: 'https://github.com/ElkinContrerasR/mi-app.git'
+            }
+        }
+        stage('Compilar') {
+            steps {
+                dir('demo') {
+                    // Asegúrate de que mvnw tenga permisos de ejecución
+                    sh 'chmod +x mvnw'
+                    sh './mvnw clean package -DskipTests'
+                }
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                // Verificar que Docker está funcionando
+                sh 'docker --version'
+
+                // Mostrar imágenes disponibles (para diagnóstico)
+                sh 'docker images'
+
+                // Prueba a usar una imagen de hello-world para verificar conexión a Docker Hub
+                sh 'docker pull hello-world'
+
+                // Construir la imagen con el Dockerfile en el directorio correcto
+                dir('demo') {
+                    sh 'docker build -t miapp .'
+                }
+            }
+        }
+        stage('Desplegar') {
+            steps {
+                dir('demo') {
+                    // Verifica si existe el archivo docker-compose.yml
+                    sh 'ls -la'
+
+                    // Si docker-compose.yml está en este directorio:
+                    sh 'docker compose down || true'
+                    sh 'docker compose up -d --build'
+
+                    // Alternativa si el archivo está en otro lugar
+                    // sh 'docker compose -f ../docker-compose.yml down || true'
+                    // sh 'docker compose -f ../docker-compose.yml up -d --build'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            // Limpieza y registro del estado
+            echo 'Pipeline completado'
+            sh 'docker ps'
+        }
+        failure {
+            echo 'El pipeline ha fallado'
+        }
+    }
+}
