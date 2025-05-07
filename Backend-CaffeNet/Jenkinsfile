@@ -1,4 +1,3 @@
-//Jenkinsfile corregido
 pipeline {
     agent any
     stages {
@@ -29,7 +28,8 @@ pipeline {
 
                 // Construir la imagen con el Dockerfile en el directorio correcto
                 dir('Backend-CaffeNet') {
-                    sh 'docker build -t backendCaffeNet .'
+                    // IMPORTANTE: el nombre de la imagen debe estar en minúsculas
+                    sh 'docker build -t backendcaffenet .'
                 }
             }
         }
