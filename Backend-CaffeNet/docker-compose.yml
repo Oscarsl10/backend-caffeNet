@@ -22,7 +22,6 @@ services:
       MYSQL_DATABASE: CaffeNet         # Nombre de la base de datos
     ports:
       - "3008:3306"      # Exponemos el puerto 3308 en el host, 3306 dentro del contenedor
-    command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0  # Permite conexiones externas
     volumes:
       - mysql-data:/var/lib/mysql  # Volumen persistente para la base de datos
     networks:
