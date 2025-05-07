@@ -4,12 +4,12 @@ pipeline {
     stages {
         stage('Clonar') {
             steps {
-                git branch: 'main', url: 'https://github.com/ElkinContrerasR/mi-app.git'
+                git branch: 'main', url: 'https://github.com/Oscarsl10/backend-caffeNet'
             }
         }
         stage('Compilar') {
             steps {
-                dir('demo') {
+                dir('Backend-CaffeNet') {
                     // Asegúrate de que mvnw tenga permisos de ejecución
                     sh 'chmod +x mvnw'
                     sh './mvnw clean package -DskipTests'
@@ -28,14 +28,14 @@ pipeline {
                 sh 'docker pull hello-world'
 
                 // Construir la imagen con el Dockerfile en el directorio correcto
-                dir('demo') {
-                    sh 'docker build -t miapp .'
+                dir('Backend-CaffeNet') {
+                    sh 'docker build -t backendCaffeNet .'
                 }
             }
         }
         stage('Desplegar') {
             steps {
-                dir('demo') {
+                dir('Backend-CaffeNet') {
                     // Verifica si existe el archivo docker-compose.yml
                     sh 'ls -la'
 
