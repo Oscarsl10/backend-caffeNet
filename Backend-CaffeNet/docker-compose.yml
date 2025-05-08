@@ -17,7 +17,6 @@ services:
       - backendnet
 
   mysql-db:
-    restart: on-failure  # Reinicia solo si el contenedor falla
     image: mysql:8      # Usamos la imagen oficial de MySQL
     environment:
       MYSQL_ROOT_PASSWORD: abcd1234   # La contraseña para el usuario root
