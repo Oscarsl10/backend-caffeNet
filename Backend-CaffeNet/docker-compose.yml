@@ -2,15 +2,18 @@ version: '3.8'
 
 services:
   app:
-    restart: "no"
-    build: .             # Construye la imagen localmente desde el Dockerfile en este directorio
-    image: backendcaffenet  # Nombre de la imagen local construida
+    build: .                     # Construye la imagen desde tu Dockerfile en el backend
+    image: backendcaffenet       # Nombre local de la imagen
+    container_name: backend-app
     ports:
-      - "8090:8082"      # Puerto mapeado (8090 en el host, 8082 en el contenedor)
+      - "8090:8082"              # Mapea el puerto externo 8090 al puerto interno del backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3308/CaffeNet  # Hostname del contenedor de la DB
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: abcd1234
     networks:
-      - backendnet  # Conexión con la red, si decides usarla
-
+      - backendnet               # Misma red que la base de datos
 
 networks:
   backendnet:
-    driver: bridge
+    external: true               # Asume que esta red ya fue creada y la comparte con la base de datos
