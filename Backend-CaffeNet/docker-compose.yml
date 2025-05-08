@@ -16,4 +16,4 @@ services:
 
 networks:
   backendnet:
-    external: true               # Asume que esta red ya fue creada y la comparte con la base de datos
+    driver: bridge
