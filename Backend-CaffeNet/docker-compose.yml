@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    restart: on-failure  # Reinicia solo si el contenedor falla
+    restart: "no"
     build: .             # Construye la imagen localmente desde el Dockerfile en este directorio
     image: backendcaffenet  # Nombre de la imagen local construida
     ports:
