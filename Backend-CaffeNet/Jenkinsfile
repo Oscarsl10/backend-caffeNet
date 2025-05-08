@@ -1,58 +1,52 @@
 pipeline {
     agent any
+
     stages {
         stage('Clonar') {
             steps {
                 git branch: 'main', url: 'https://github.com/Oscarsl10/backend-caffeNet'
             }
         }
+
         stage('Compilar') {
             steps {
                 dir('Backend-CaffeNet') {
-                    // Asegúrate de que mvnw tenga permisos de ejecución
                     sh 'chmod +x mvnw'
                     sh './mvnw clean package -DskipTests'
                 }
             }
         }
+
         stage('Docker Build') {
             steps {
-                // Verificar que Docker está funcionando
                 sh 'docker --version'
-
-                // Mostrar imágenes disponibles (para diagnóstico)
                 sh 'docker images'
-
-                // Prueba a usar una imagen de hello-world para verificar conexión a Docker Hub
                 sh 'docker pull hello-world'
 
-                // Construir la imagen con el Dockerfile en el directorio correcto
                 dir('Backend-CaffeNet') {
-                    // IMPORTANTE: el nombre de la imagen debe estar en minúsculas
                     sh 'docker build -t backendcaffenet .'
                 }
             }
         }
+
         stage('Desplegar') {
             steps {
                 dir('Backend-CaffeNet') {
-                    // Verifica si existe el archivo docker-compose.yml
+                    // Mostrar archivos para diagnóstico
                     sh 'ls -la'
 
-                    // Si docker-compose.yml está en este directorio:
-                    sh 'docker compose down || true'
-                    sh 'docker compose up -d --build'
+                    // Construir solo el servicio "app" (el backend)
+                    sh 'docker compose build app'
 
-                    // Alternativa si el archivo está en otro lugar
-                    // sh 'docker compose -f ../docker-compose.yml down || true'
-                    // sh 'docker compose -f ../docker-compose.yml up -d --build'
+                    // Levantar solo el contenedor del backend sin tocar mysql-db
+                    sh 'docker compose up -d app'
                 }
             }
         }
     }
+
     post {
         always {
-            // Limpieza y registro del estado
             echo 'Pipeline completado'
             sh 'docker ps'
         }
