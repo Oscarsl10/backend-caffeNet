@@ -73,6 +73,7 @@ public abstract class ABaseService <T extends ABaseEntity> implements IBaseServi
         T entityUpdate = op.get();
         entityUpdate.setDeletedBy(3L);
         entityUpdate.setDeletedAt(LocalDateTime.now());
+        entityUpdate.setStatus(false);
 
         getRepository().save(entityUpdate);
     }
