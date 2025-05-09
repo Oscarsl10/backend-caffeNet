@@ -1,6 +1,8 @@
 package com.corhuila.Backend_CaffeNet.modules.reserva.Entity;
 
 import com.corhuila.Backend_CaffeNet.common.base.ABaseEntity;
+import com.corhuila.Backend_CaffeNet.modules.mesa.Entity.Mesa;
+import com.corhuila.Backend_CaffeNet.modules.producto.Entity.Producto;
 import com.corhuila.Backend_CaffeNet.modules.user.Entity.Users;
 import jakarta.persistence.*;
 
@@ -27,6 +29,14 @@ public class Reserva extends ABaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
+
+    @ManyToOne
+    @JoinColumn(name = "producto_id")
+    private Producto producto;
+
+    @ManyToOne
+    @JoinColumn(name = "mesa_id")
+    private Mesa mesa;
 
 
     public Date getFecha_inicio() {

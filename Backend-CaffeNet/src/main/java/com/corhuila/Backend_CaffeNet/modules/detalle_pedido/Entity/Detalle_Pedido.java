@@ -24,6 +24,8 @@ public class Detalle_Pedido extends ABaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
+    @ManyToOne
+
 
     public Double getSubtotal() {
         return subtotal = calcularSubtotal();

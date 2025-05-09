@@ -23,6 +23,9 @@ public class Producto extends ABaseEntity {
     @Column(name = "stock")
     private Integer stock;
 
+    @Column(name="url")
+    private String url;
+
     public String getNombre() {
         return nombre;
     }
@@ -61,5 +64,13 @@ public class Producto extends ABaseEntity {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
