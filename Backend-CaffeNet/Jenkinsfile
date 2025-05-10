@@ -20,7 +20,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 dir('Backend-CaffeNet') {
-                    // Recompila la imagen sin reiniciar contenedores
+                    // Reconstruye la imagen del backend con el mismo tag
                     sh 'docker build -t backendcaffenet .'
                 }
             }
@@ -29,12 +29,15 @@ pipeline {
         stage('Actualizar sin reiniciar') {
             steps {
                 script {
-                    // Solo para asegurarse que el contenedor esté corriendo
-                    def running = sh(script: "docker ps -q -f name=app", returnStdout: true).trim()
+                    // Verificamos si el contenedor del backend ya está en ejecución.
+                    // Ajusta el filtro de nombre al que realmente usa tu contenedor:
+                    def running = sh(script: "docker ps -q -f name=backend-caffenet-app-1", returnStdout: true).trim()
+
                     if (running) {
-                        echo 'Contenedor del backend en ejecución, no se reinicia'
+                        echo 'Contenedor del backend en ejecución, no se reinicia.'
                     } else {
-                        echo 'Contenedor no encontrado, iniciando manualmente'
+                        echo 'Contenedor del backend NO encontrado, iniciando todos los servicios:'
+                        // Levanta (solo una vez) todos los servicios definidos en docker-compose.yml
                         sh 'docker compose up -d'
                     }
                 }
@@ -44,11 +47,11 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline completado (sin reiniciar contenedores existentes)'
+            echo 'Pipeline completado.'
             sh 'docker ps'
         }
         failure {
-            echo 'El pipeline ha fallado'
+            echo 'El pipeline ha fallado.'
         }
     }
 }
