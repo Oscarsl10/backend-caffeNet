@@ -19,19 +19,35 @@ pipeline {
 
         stage('Docker Build') {
             steps {
+                sh 'docker --version'
+                sh 'docker images'
+                sh 'docker pull hello-world'
+
                 dir('Backend-CaffeNet') {
-                    // Solo construir la imagen del backend
                     sh 'docker build -t backendcaffenet .'
                 }
             }
         }
 
-        // ⚠️ OMITIMOS el paso de despliegue para evitar reiniciar contenedores
+        stage('Desplegar') {
+            steps {
+                dir('Backend-CaffeNet') {
+                    // Mostrar archivos para diagnóstico
+                    sh 'ls -la'
+
+                    // Construir solo el servicio "app" (el backend)
+                    sh 'docker compose build app'
+
+                    // Levantar solo el contenedor del backend sin tocar mysql-db
+                    sh 'docker compose up -d app'
+                }
+            }
+        }
     }
 
     post {
         always {
-            echo 'Pipeline completado (sin reiniciar contenedores)'
+            echo 'Pipeline completado'
             sh 'docker ps'
         }
         failure {
