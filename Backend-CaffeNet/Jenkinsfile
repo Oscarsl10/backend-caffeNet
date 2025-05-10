@@ -37,31 +37,36 @@ pipeline {
 
         stage('Reconstruir imagen y reiniciar backend') {
             steps {
-                dir('Backend-CaffeNet') {
-                    script {
-                        // Construimos nueva imagen
-                        sh "docker build -t ${IMAGE_NAME} ."
+                script {
+                    // Asegura que la red existe
+                    sh '''
+                    if ! docker network ls --format '{{.Name}}' | grep -w backendnet > /dev/null; then
+                        echo "Red backendnet no existe. Creándola..."
+                        docker network create backendnet
+                    else
+                        echo "Red backendnet ya existe."
+                    fi
+                    '''
 
-                        // Reiniciar solo el contenedor del backend si está corriendo
-                        def running = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
-                        if (running) {
-                            echo "Contenedor backend corriendo. Reiniciando..."
-                            sh "docker stop ${CONTAINER_NAME}"
-                            sh "docker rm ${CONTAINER_NAME}"
-                        } else {
-                            echo "Contenedor backend no está corriendo. Lo iniciaremos."
+                    def containerRunning = sh(script: "docker ps -q -f name=backend-container", returnStdout: true).trim()
+                    def containerExists = sh(script: "docker ps -aq -f name=backend-container", returnStdout: true).trim()
+
+                    if (containerRunning) {
+                        echo "El contenedor backend ya está corriendo. No se reiniciará."
+                    } else {
+                        if (containerExists) {
+                            echo "Contenedor backend detenido. Eliminándolo..."
+                            sh "docker rm -f backend-container"
                         }
-
-                        // Iniciar nuevo contenedor (misma configuración del docker-compose pero manual)
-                        sh """
-                            docker run -d --name ${CONTAINER_NAME} \
-                            --network=backendnet \
+                        echo "Iniciando contenedor backend..."
+                        sh '''
+                        docker run -d --name backend-container --network=backendnet \
                             -p 8090:8082 \
-                            -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3008/CaffeNet \
+                            -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/CaffeNet \
                             -e SPRING_DATASOURCE_USERNAME=root \
                             -e SPRING_DATASOURCE_PASSWORD=abcd1234 \
-                            ${IMAGE_NAME}
-                        """
+                            backendcaffenet
+                        '''
                     }
                 }
             }
