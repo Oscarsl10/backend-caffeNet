@@ -9,14 +9,13 @@ pipeline {
             steps {
                 dir('Backend-CaffeNet') {
                     script {
-                        // Clonamos solo si hay cambios desde el último build
                         def changes = sh(script: "git ls-remote https://github.com/Oscarsl10/backend-caffeNet HEAD", returnStdout: true).trim()
-                        def current = sh(script: "cat .last_commit || echo none", returnStdout: true).trim()
+                        def current = sh(script: "cat ../.last_commit || echo none", returnStdout: true).trim()
                         if (changes != current) {
                             echo "Cambios detectados. Actualizando..."
-                            sh 'rm -rf *'
+                            sh 'rm -rf Backend-CaffeNet'
                             git branch: 'main', url: 'https://github.com/Oscarsl10/backend-caffeNet'
-                            sh "git rev-parse HEAD > .last_commit"
+                            sh "git rev-parse HEAD > ../.last_commit"
                         } else {
                             echo "No hay cambios en el repositorio. Saliendo del pipeline."
                             currentBuild.result = 'SUCCESS'
