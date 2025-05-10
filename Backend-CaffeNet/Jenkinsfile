@@ -1,28 +1,10 @@
 pipeline {
     agent any
-    environment {
-        IMAGE_NAME = 'backendcaffenet'
-        CONTAINER_NAME = 'backend-container'
-    }
+
     stages {
         stage('Clonar') {
             steps {
-                dir('Backend-CaffeNet') {
-                    script {
-                        def changes = sh(script: "git ls-remote https://github.com/Oscarsl10/backend-caffeNet HEAD", returnStdout: true).trim()
-                        def current = sh(script: "cat ../.last_commit || echo none", returnStdout: true).trim()
-                        if (changes != current) {
-                            echo "Cambios detectados. Actualizando..."
-                            sh 'rm -rf Backend-CaffeNet'
-                            git branch: 'main', url: 'https://github.com/Oscarsl10/backend-caffeNet'
-                            sh "git rev-parse HEAD > ../.last_commit"
-                        } else {
-                            echo "No hay cambios en el repositorio. Saliendo del pipeline."
-                            currentBuild.result = 'SUCCESS'
-                            error("Sin cambios. Cancelando build.")
-                        }
-                    }
-                }
+                git branch: 'main', url: 'https://github.com/Oscarsl10/backend-caffeNet'
             }
         }
 
@@ -35,50 +17,38 @@ pipeline {
             }
         }
 
-        stage('Reconstruir imagen y reiniciar backend') {
+        stage('Docker Build') {
+            steps {
+                dir('Backend-CaffeNet') {
+                    // Recompila la imagen sin reiniciar contenedores
+                    sh 'docker build -t backendcaffenet .'
+                }
+            }
+        }
+
+        stage('Actualizar sin reiniciar') {
             steps {
                 script {
-                    // Asegura que la red existe
-                    sh '''
-                    if ! docker network ls --format '{{.Name}}' | grep -w backendnet > /dev/null; then
-                        echo "Red backendnet no existe. Creándola..."
-                        docker network create backendnet
-                    else
-                        echo "Red backendnet ya existe."
-                    fi
-                    '''
-
-                    def containerRunning = sh(script: "docker ps -q -f name=backend-container", returnStdout: true).trim()
-                    def containerExists = sh(script: "docker ps -aq -f name=backend-container", returnStdout: true).trim()
-
-                    if (containerRunning) {
-                        echo "El contenedor backend ya está corriendo. No se reiniciará."
+                    // Solo para asegurarse que el contenedor esté corriendo
+                    def running = sh(script: "docker ps -q -f name=app", returnStdout: true).trim()
+                    if (running) {
+                        echo 'Contenedor del backend en ejecución, no se reinicia'
                     } else {
-                        if (containerExists) {
-                            echo "Contenedor backend detenido. Eliminándolo..."
-                            sh "docker rm -f backend-container"
-                        }
-                        echo "Iniciando contenedor backend..."
-                        sh '''
-                        docker run -d --name backend-container --network=backendnet \
-                            -p 8090:8082 \
-                            -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/CaffeNet \
-                            -e SPRING_DATASOURCE_USERNAME=root \
-                            -e SPRING_DATASOURCE_PASSWORD=abcd1234 \
-                            backendcaffenet
-                        '''
+                        echo 'Contenedor no encontrado, iniciando manualmente'
+                        sh 'docker compose up -d'
                     }
                 }
             }
         }
     }
+
     post {
         always {
-            echo 'Pipeline finalizado'
+            echo 'Pipeline completado (sin reiniciar contenedores existentes)'
             sh 'docker ps'
         }
         failure {
-            echo 'El pipeline falló'
+            echo 'El pipeline ha fallado'
         }
     }
 }
