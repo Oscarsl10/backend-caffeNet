@@ -19,27 +19,27 @@ pipeline {
 
         stage('Docker Build') {
             steps {
+                sh 'docker --version'
+                sh 'docker images'
+                sh 'docker pull hello-world'
+
                 dir('Backend-CaffeNet') {
-                    // Reconstruye la imagen del backend con el mismo tag
                     sh 'docker build -t backendcaffenet .'
                 }
             }
         }
 
-        stage('Actualizar sin reiniciar') {
+        stage('Desplegar') {
             steps {
-                script {
-                    // Verificamos si el contenedor del backend ya está en ejecución.
-                    // Ajusta el filtro de nombre al que realmente usa tu contenedor:
-                    def running = sh(script: "docker ps -q -f name=backend-caffenet-app-1", returnStdout: true).trim()
+                dir('Backend-CaffeNet') {
+                    // Mostrar archivos para diagnóstico
+                    sh 'ls -la'
 
-                    if (running) {
-                        echo 'Contenedor del backend en ejecución, no se reinicia.'
-                    } else {
-                        echo 'Contenedor del backend NO encontrado, iniciando todos los servicios:'
-                        // Levanta (solo una vez) todos los servicios definidos en docker-compose.yml
-                        sh 'docker compose up -d'
-                    }
+                    // Construir solo el servicio "app" (el backend)
+                    sh 'docker compose build app'
+
+                    // Levantar solo el contenedor del backend sin tocar mysql-db
+                    sh 'docker compose up -d app'
                 }
             }
         }
@@ -47,11 +47,11 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline completado.'
+            echo 'Pipeline completado'
             sh 'docker ps'
         }
         failure {
-            echo 'El pipeline ha fallado.'
+            echo 'El pipeline ha fallado'
         }
     }
 }
