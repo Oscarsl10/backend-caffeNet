@@ -1,56 +1,57 @@
 pipeline {
-  agent any
+    agent any
 
-  stages {
-    stage('Clonar') {
-      steps {
-        git branch: 'main', url: 'https://github.com/Oscarsl10/backend-caffeNet'
-      }
-    }
-
-    stage('Compilar') {
-      steps {
-        dir('Backend-CaffeNet') {
-          sh 'chmod +x mvnw'
-          sh './mvnw clean package -DskipTests'
+    stages {
+        stage('Clonar') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Oscarsl10/backend-caffeNet'
+            }
         }
-      }
-    }
 
-    stage('Build Docker Image') {
-      steps {
-        dir('Backend-CaffeNet') {
-          sh 'docker build -t backendcaffenet .'
+        stage('Compilar') {
+            steps {
+                dir('Backend-CaffeNet') {
+                    sh 'chmod +x mvnw'
+                    sh './mvnw clean package -DskipTests'
+                }
+            }
         }
-      }
-    }
 
-    stage('Smart Deploy') {
-      steps {
-        dir('Backend-CaffeNet') {
-          // Si el contenedor mysql-db NO está corriendo → primer despliegue completo
-          // Sino → solo actualiza el backend
-          sh '''
-            if [ -z "$(docker ps --filter "name=mysql-db" --filter "status=running" -q)" ]; then
-              echo "Base de datos NO detectada; desplegando DB + backend..."
-              docker compose up -d
-            else
-              echo "Base de datos ya viva; reiniciando solo el backend..."
-              docker compose up -d --no-deps app
-            fi
-          '''
+        stage('Docker Build') {
+            steps {
+                sh 'docker --version'
+                sh 'docker images'
+                sh 'docker pull hello-world'
+
+                dir('Backend-CaffeNet') {
+                    sh 'docker build -t backendcaffenet .'
+                }
+            }
         }
-      }
-    }
-  }
 
-  post {
-    always {
-      echo 'Estado final de contenedores:'
-      sh 'docker ps'
+        stage('Desplegar') {
+            steps {
+                dir('Backend-CaffeNet') {
+                    // Mostrar archivos para diagnóstico
+                    sh 'ls -la'
+
+                    // Construir solo el servicio "app" (el backend)
+                    sh 'docker compose build app'
+
+                    // Levantar solo el contenedor del backend sin tocar mysql-db
+                    sh 'docker compose up -d app'
+                }
+            }
+        }
     }
-    failure {
-      echo '¡La pipeline ha fallado!'
+
+    post {
+        always {
+            echo 'Pipeline completado'
+            sh 'docker ps'
+        }
+        failure {
+            echo 'El pipeline ha fallado'
+        }
     }
-  }
 }
