@@ -19,27 +19,24 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker --version'
-                sh 'docker images'
-                sh 'docker pull hello-world'
-
                 dir('Backend-CaffeNet') {
+                    // Recompila la imagen sin reiniciar contenedores
                     sh 'docker build -t backendcaffenet .'
                 }
             }
         }
 
-        stage('Desplegar') {
+        stage('Actualizar sin reiniciar') {
             steps {
-                dir('Backend-CaffeNet') {
-                    // Mostrar archivos para diagnóstico
-                    sh 'ls -la'
-
-                    // Construir solo el servicio "app" (el backend)
-                    sh 'docker compose build app'
-
-                    // Levantar solo el contenedor del backend sin tocar mysql-db
-                    sh 'docker compose up -d app'
+                script {
+                    // Solo para asegurarse que el contenedor esté corriendo
+                    def running = sh(script: "docker ps -q -f name=app", returnStdout: true).trim()
+                    if (running) {
+                        echo 'Contenedor del backend en ejecución, no se reinicia'
+                    } else {
+                        echo 'Contenedor no encontrado, iniciando manualmente'
+                        sh 'docker compose up -d'
+                    }
                 }
             }
         }
@@ -47,7 +44,7 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline completado'
+            echo 'Pipeline completado (sin reiniciar contenedores existentes)'
             sh 'docker ps'
         }
         failure {
