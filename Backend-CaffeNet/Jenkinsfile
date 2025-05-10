@@ -1,10 +1,29 @@
 pipeline {
     agent any
-
+    environment {
+        IMAGE_NAME = 'backendcaffenet'
+        CONTAINER_NAME = 'backend-container'
+    }
     stages {
         stage('Clonar') {
             steps {
-                git branch: 'main', url: 'https://github.com/Oscarsl10/backend-caffeNet'
+                dir('Backend-CaffeNet') {
+                    script {
+                        // Clonamos solo si hay cambios desde el último build
+                        def changes = sh(script: "git ls-remote https://github.com/Oscarsl10/backend-caffeNet HEAD", returnStdout: true).trim()
+                        def current = sh(script: "cat .last_commit || echo none", returnStdout: true).trim()
+                        if (changes != current) {
+                            echo "Cambios detectados. Actualizando..."
+                            sh 'rm -rf *'
+                            git branch: 'main', url: 'https://github.com/Oscarsl10/backend-caffeNet'
+                            sh "git rev-parse HEAD > .last_commit"
+                        } else {
+                            echo "No hay cambios en el repositorio. Saliendo del pipeline."
+                            currentBuild.result = 'SUCCESS'
+                            error("Sin cambios. Cancelando build.")
+                        }
+                    }
+                }
             }
         }
 
@@ -17,41 +36,45 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
-            steps {
-                sh 'docker --version'
-                sh 'docker images'
-                sh 'docker pull hello-world'
-
-                dir('Backend-CaffeNet') {
-                    sh 'docker build -t backendcaffenet .'
-                }
-            }
-        }
-
-        stage('Desplegar') {
+        stage('Reconstruir imagen y reiniciar backend') {
             steps {
                 dir('Backend-CaffeNet') {
-                    // Mostrar archivos para diagnóstico
-                    sh 'ls -la'
+                    script {
+                        // Construimos nueva imagen
+                        sh "docker build -t ${IMAGE_NAME} ."
 
-                    // Construir solo el servicio "app" (el backend)
-                    sh 'docker compose build app'
+                        // Reiniciar solo el contenedor del backend si está corriendo
+                        def running = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
+                        if (running) {
+                            echo "Contenedor backend corriendo. Reiniciando..."
+                            sh "docker stop ${CONTAINER_NAME}"
+                            sh "docker rm ${CONTAINER_NAME}"
+                        } else {
+                            echo "Contenedor backend no está corriendo. Lo iniciaremos."
+                        }
 
-                    // Levantar solo el contenedor del backend sin tocar mysql-db
-                    sh 'docker compose up -d app'
+                        // Iniciar nuevo contenedor (misma configuración del docker-compose pero manual)
+                        sh """
+                            docker run -d --name ${CONTAINER_NAME} \
+                            --network=backendnet \
+                            -p 8090:8082 \
+                            -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/CaffeNet \
+                            -e SPRING_DATASOURCE_USERNAME=root \
+                            -e SPRING_DATASOURCE_PASSWORD=abcd1234 \
+                            ${IMAGE_NAME}
+                        """
+                    }
                 }
             }
         }
     }
-
     post {
         always {
-            echo 'Pipeline completado'
+            echo 'Pipeline finalizado'
             sh 'docker ps'
         }
         failure {
-            echo 'El pipeline ha fallado'
+            echo 'El pipeline falló'
         }
     }
 }
