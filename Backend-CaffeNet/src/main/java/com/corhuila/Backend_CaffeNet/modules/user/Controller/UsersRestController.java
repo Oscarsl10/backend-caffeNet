@@ -53,7 +53,7 @@ public class UsersRestController {
         return usersService.loginUser(loginRequest);
     }
 
-    @GetMapping("/getUser/{email}")
+    @GetMapping("/user/{email}")
     public Users show(@PathVariable String email){
         return usersService.findById(email);
     }

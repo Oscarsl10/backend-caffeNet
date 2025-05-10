@@ -58,7 +58,7 @@ public class AdminRestController {
         return adminService.loginAdmin(loginAdminRequest);
     }
 
-    @GetMapping("/getAdmin/{email}")
+    @GetMapping("/admin/{email}")
     public Admin show(@PathVariable String email){
         return adminService.findById(email);
     }
