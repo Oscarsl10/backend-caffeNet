@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "mesa")
-
 public class Mesa extends ABaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

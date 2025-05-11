@@ -3,6 +3,7 @@ package com.corhuila.Backend_CaffeNet.modules.car_buys.Entity;
 import com.corhuila.Backend_CaffeNet.common.base.ABaseEntity;
 import com.corhuila.Backend_CaffeNet.modules.car_buys.Enum.EstadoCarrito;
 import com.corhuila.Backend_CaffeNet.modules.producto.Entity.Producto;
+import com.corhuila.Backend_CaffeNet.modules.user.Entity.Users;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,9 @@ public class CarBuy extends ABaseEntity {
     @JoinColumn(name = "producto_id")
     private Producto producto;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Users users;
 
     private double total;
 
@@ -61,14 +65,20 @@ public class CarBuy extends ABaseEntity {
         this.producto = producto;
     }
 
-
-
     public double getTotal() {
         return total;
     }
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
     }
 }
 
