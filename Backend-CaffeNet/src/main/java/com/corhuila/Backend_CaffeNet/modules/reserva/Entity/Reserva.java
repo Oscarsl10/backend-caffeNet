@@ -18,7 +18,7 @@ public class Reserva extends ABaseEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "fecha_fin")
-    private Date fecha_fin;
+    private Date fechaFin;
 
     @Column(name = "numero_Personas")
     private Integer numero_Personas;
@@ -75,11 +75,11 @@ public class Reserva extends ABaseEntity {
         this.users = users;
     }
 
-    public Date getFecha_fin() {
-        return fecha_fin;
+    public Date getFechaFin() {
+        return fechaFin;
     }
 
-    public void setFecha_fin(Date fecha_fin) {
-        this.fecha_fin = fecha_fin;
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
     }
 }
