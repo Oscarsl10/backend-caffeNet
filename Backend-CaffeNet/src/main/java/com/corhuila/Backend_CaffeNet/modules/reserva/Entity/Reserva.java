@@ -31,13 +31,17 @@ public class Reserva extends ABaseEntity {
     private Users users;
 
     @ManyToOne
-    @JoinColumn(name = "producto_id")
-    private Producto producto;
-
-    @ManyToOne
     @JoinColumn(name = "mesa_id")
     private Mesa mesa;
 
+
+    public Mesa getMesa() {
+        return mesa;
+    }
+
+    public void setMesa(Mesa mesa) {
+        this.mesa = mesa;
+    }
 
     public Date getFecha_inicio() {
         return fecha_inicio;
