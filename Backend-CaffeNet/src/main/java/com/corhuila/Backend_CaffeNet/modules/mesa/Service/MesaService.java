@@ -15,17 +15,42 @@ import java.util.List;
 @Service
 
 public class MesaService extends ABaseService<Mesa> implements IMesaService {
+
+    @Autowired
+    private IMesaRepository mesaRepository;
+
     @Override
     protected IBaseRepository<Mesa, Long> getRepository() {
         return mesaRepository;
     }
 
-    @Autowired
-    private IMesaRepository mesaRepository;
+    @Override
+    public void ocuparMesa(Long idMesa) {
+        Mesa mesa = mesaRepository.findById(idMesa)
+                .orElseThrow(() -> new IllegalArgumentException("Mesa no encontrada"));
 
+        if (!"DISPONIBLE".equalsIgnoreCase(mesa.getEstado())) {
+            throw new IllegalStateException("La mesa no está disponible para ser ocupada.");
+        }
 
-    @Transactional(readOnly = true)
-    public List<Mesa> findAll(){
-        return (List<Mesa>) mesaRepository.findAll();
+        mesa.setEstado("OCUPADO");
+        mesaRepository.save(mesa);
+    }
+
+    @Override
+    public boolean estaDisponible(Long idMesa) {
+        Mesa mesa = mesaRepository.findById(idMesa)
+                .orElseThrow(() -> new IllegalArgumentException("Mesa no encontrada"));
+
+        return "DISPONIBLE".equalsIgnoreCase(mesa.getEstado());
+    }
+
+    @Override
+    public void liberarMesa(Long idMesa) {
+        Mesa mesa = mesaRepository.findById(idMesa)
+                .orElseThrow(() -> new IllegalArgumentException("Mesa no encontrada"));
+
+        mesa.setEstado("DISPONIBLE");
+        mesaRepository.save(mesa);
     }
 }

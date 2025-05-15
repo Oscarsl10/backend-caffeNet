@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface IReservaRepository extends IBaseRepository<Reserva, Long> {
-    List<Reserva> findByFechaFinBeforeAndEstadoNot(Date fecha, String estado);
+    List<Reserva> findByFechaFinBeforeAndEstadoNot(Date fechaFin, String estado);
 
 }

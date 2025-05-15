@@ -27,6 +27,7 @@ public class CarBuyService extends ABaseService<CarBuy> implements ICarBuyServic
             throw new RuntimeException("Error al eliminar los productos del carrito: " + e.getMessage());
         }
     }
+
     public void deleteById(Long id) {
         if (carBuyRepository.existsById(id)) {
             carBuyRepository.deleteById(id);

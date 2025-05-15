@@ -14,14 +14,16 @@ public class CarBuy extends ABaseEntity {
     public CarBuy(){
 
     }
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    private LocalDateTime fechaCreacion;
+    @Column(name = "fecha_creacion")
+    private LocalDateTime fecha_creacion;
 
+    @Column(name = "estado")
     @Enumerated(EnumType.STRING)
     private EstadoCarrito estado;
+
+    @Column(name = "total")
+    private double total;
 
     @ManyToOne
     @JoinColumn(name = "producto_id")
@@ -31,22 +33,14 @@ public class CarBuy extends ABaseEntity {
     @JoinColumn(name = "user_id")
     private Users users;
 
-    private double total;
 
-    public Long getId() {
-        return id;
+
+    public LocalDateTime getFecha_creacion() {
+        return fecha_creacion;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+    public void setFecha_creacion(LocalDateTime fecha_creacion) {
+        this.fecha_creacion = fecha_creacion;
     }
 
     public EstadoCarrito getEstado() {
@@ -80,6 +74,7 @@ public class CarBuy extends ABaseEntity {
     public void setUsers(Users users) {
         this.users = users;
     }
+
 }
 
 

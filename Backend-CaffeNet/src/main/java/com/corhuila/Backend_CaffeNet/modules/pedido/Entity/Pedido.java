@@ -11,17 +11,17 @@ import java.util.Date;
 @Table(name = "pedido")
 public class Pedido extends ABaseEntity {
 
-    @Column(name = "nombre", length = 150)
+    @Column(name = "nombre", length = 150, nullable = false)
     private String nombre;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "fecha_pedido")
+    @Column(name = "fecha_pedido", nullable = false)
     private Date fecha_pedido;
 
-    @Column(name = "estado")
+    @Column(name = "estado", nullable = false)
     private String estado;
 
-    @Column(name = "cantidad")
+    @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
 
     @ManyToOne

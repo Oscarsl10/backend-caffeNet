@@ -5,17 +5,22 @@ import com.corhuila.Backend_CaffeNet.common.base.ABaseController;
 import com.corhuila.Backend_CaffeNet.modules.car_buys.Entity.CarBuy;
 import com.corhuila.Backend_CaffeNet.modules.car_buys.IRepository.ICarBuyRepository;
 import com.corhuila.Backend_CaffeNet.modules.car_buys.IService.ICarBuyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/carbuys")
+@RequestMapping("/api/v1/carbuys")
 @CrossOrigin(origins = "*")
 public class CarBuyController extends ABaseController<CarBuy, ICarBuyService> {
+
     public  CarBuyController(ICarBuyService service) {
         super(service, "Continent");
     }
+
+    @Autowired
     private ICarBuyRepository carBuyRepository;
+
 
     @DeleteMapping("/deleteAll")
     public ResponseEntity<ApiResponseDto<Void>> deleteAll() {
@@ -26,6 +31,7 @@ public class CarBuyController extends ABaseController<CarBuy, ICarBuyService> {
             return ResponseEntity.internalServerError().body(new ApiResponseDto<>(e.getMessage(), null, false));
         }
     }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponseDto<Void>> deleteById(@PathVariable Long id) {
         try {

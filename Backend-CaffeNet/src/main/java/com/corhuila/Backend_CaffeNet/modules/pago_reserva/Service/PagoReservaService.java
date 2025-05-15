@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class PagoReservaService extends ABaseService<PagoReserva> implements IPagoReservaService {
+
     @Autowired
     private IPagoReservaRepository PagoReservaRepository;
 
@@ -20,6 +21,7 @@ public class PagoReservaService extends ABaseService<PagoReserva> implements IPa
     protected IBaseRepository<PagoReserva, Long> getRepository() {
         return PagoReservaRepository;
     }
+
     @Override
     public PagoReserva save(PagoReserva pagoReserva) {
         pagoReserva.calcularMontoDesdeReserva(); // Se calcula automáticamente el monto

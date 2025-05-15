@@ -7,9 +7,6 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "mesa")
 public class Mesa extends ABaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(name = "numero", nullable = false, unique = true)
     private Integer numero;
@@ -17,19 +14,14 @@ public class Mesa extends ABaseEntity {
     @Column(name = "capacidad", nullable = false)
     private Integer capacidad;
 
-    @Column(name = "ubicacion", length = 100)
+    @Column(name = "ubicacion", length = 100, nullable = false)
     private String ubicacion;
 
     @Column(name = "estado", length = 20)
     private String estado;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(name = "precio")
+    private Double precio;
 
     public Integer getNumero() {
         return numero;
@@ -61,5 +53,13 @@ public class Mesa extends ABaseEntity {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
     }
 }

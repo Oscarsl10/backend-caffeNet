@@ -2,6 +2,7 @@ package com.corhuila.Backend_CaffeNet.modules.pago.Entity;
 
 import com.corhuila.Backend_CaffeNet.common.base.ABaseEntity;
 import com.corhuila.Backend_CaffeNet.modules.pedido.Entity.Pedido;
+import com.corhuila.Backend_CaffeNet.modules.user.Entity.Users;
 import jakarta.persistence.*;
 
 @Entity
@@ -17,6 +18,10 @@ public class Pago extends ABaseEntity {
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false) // Clave foránea
     private Pedido pedido;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private Users users;
 
     public String getMetodo_Pago() {
         return metodo_Pago;
@@ -42,4 +47,11 @@ public class Pago extends ABaseEntity {
         this.pedido = pedido;
     }
 
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
 }

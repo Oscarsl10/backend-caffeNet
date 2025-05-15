@@ -3,6 +3,8 @@ package com.corhuila.Backend_CaffeNet.modules.reserva.Service;
 import com.corhuila.Backend_CaffeNet.common.base.ABaseService;
 import com.corhuila.Backend_CaffeNet.modules.mesa.Entity.Mesa;
 import com.corhuila.Backend_CaffeNet.modules.mesa.IRepository.IMesaRepository;
+import com.corhuila.Backend_CaffeNet.modules.mesa.IService.IMesaService;
+import com.corhuila.Backend_CaffeNet.modules.mesa.Service.MesaService;
 import com.corhuila.Backend_CaffeNet.modules.reserva.Entity.Reserva;
 import com.corhuila.Backend_CaffeNet.modules.reserva.IService.IReservaService;
 import com.corhuila.Backend_CaffeNet.common.base.IBaseRepository;
@@ -16,15 +18,21 @@ import java.util.List;
 
 @Service
 public class ReservaService extends ABaseService<Reserva> implements IReservaService {
+
+
     @Autowired
     private IMesaRepository mesaRepository;
+    @Autowired
+    private IReservaRepository reservaRepository;
+    @Autowired
+    private IMesaService mesaService;
+
     @Override
     protected IBaseRepository<Reserva, Long> getRepository() {
         return reservaRepository;
     }
 
-    @Autowired
-    private IReservaRepository reservaRepository;
+    @Override
     public void liberarMesasReservasFinalizadas() {
         Date ahora = new Date();
         List<Reserva> reservasFinalizadas = reservaRepository.findByFechaFinBeforeAndEstadoNot(ahora, "FINALIZADA");
@@ -37,5 +45,29 @@ public class ReservaService extends ABaseService<Reserva> implements IReservaSer
             reserva.setEstado("FINALIZADA");
             reservaRepository.save(reserva);
         }
+    }
+
+    @Override
+    public void crearReserva(Reserva reserva) {
+        Long idMesa = reserva.getMesa().getId();
+
+        if (!mesaService.estaDisponible(idMesa)) {
+            throw new IllegalStateException("La mesa seleccionada está ocupada.");
+        }
+
+        reserva.setEstado("ACTIVA");
+        reservaRepository.save(reserva);
+        mesaService.ocuparMesa(idMesa);
+    }
+
+    @Override
+    public void finalizarReserva(Long idReserva) {
+        Reserva reserva = reservaRepository.findById(idReserva)
+                .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+
+        reserva.setEstado("FINALIZADA");
+        reservaRepository.save(reserva);
+
+        mesaService.liberarMesa(reserva.getMesa().getId());
     }
 }

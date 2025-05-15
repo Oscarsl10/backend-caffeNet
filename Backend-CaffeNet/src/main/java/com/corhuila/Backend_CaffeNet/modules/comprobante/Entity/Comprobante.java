@@ -12,8 +12,8 @@ import java.util.Date;
 public class Comprobante extends ABaseEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "fecha_Emision")
-    private Date fecha_Emision;
+    @Column(name = "fecha_emision")
+    private Date fecha_emision;
 
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
@@ -23,12 +23,12 @@ public class Comprobante extends ABaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
 
-    public Date getFecha_Emision() {
-        return fecha_Emision;
+    public Date getFecha_emision() {
+        return fecha_emision;
     }
 
-    public void setFecha_Emision(Date fecha_Emision) {
-        this.fecha_Emision = fecha_Emision;
+    public void setFecha_emision(Date fecha_emision) {
+        this.fecha_emision = fecha_emision;
     }
 
     public Pedido getPedido() {

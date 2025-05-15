@@ -21,13 +21,16 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping("/api/v1/pago/reserva")
 public class PagoReservaController extends ABaseController<PagoReserva, IPagoReservaService> {
-    public PagoReservaController(IPagoReservaService service) {
-        super(service, "Continent");
-    }
+
     @Autowired
     PagoReservaService pagoReservaService;
     @Autowired
     IReservaRepository reservaRepository;
+
+    public PagoReservaController(IPagoReservaService service) {
+        super(service, "Continent");
+    }
+
     @PostMapping("/add")
     public ResponseEntity<PagoReserva> create(@RequestBody PagoReserva pagoReserva) {
         // Obtener la reserva completa desde el repositorio usando el ID
@@ -42,8 +45,4 @@ public class PagoReservaController extends ABaseController<PagoReserva, IPagoRes
         // Devolver el pago creado
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPago);
     }
-
-
-
-
 }
