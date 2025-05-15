@@ -19,4 +19,9 @@ public class ComprobanteService extends ABaseService<Comprobante> implements ICo
 
     @Autowired
     private IComprobanteRepository comprobanteRepository;
+
+@Override
+public Comprobante save(Comprobante entity) throws Exception {
+        return null;
+    }
 }

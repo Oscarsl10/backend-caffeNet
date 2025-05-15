@@ -34,6 +34,7 @@ public class Reserva extends ABaseEntity {
     @JoinColumn(name = "mesa_id")
     private Mesa mesa;
 
+    private double precio;
 
     public Mesa getMesa() {
         return mesa;
@@ -81,5 +82,13 @@ public class Reserva extends ABaseEntity {
 
     public void setFechaFin(Date fechaFin) {
         this.fechaFin = fechaFin;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
     }
 }
