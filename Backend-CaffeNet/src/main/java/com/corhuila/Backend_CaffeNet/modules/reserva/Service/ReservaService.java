@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -82,5 +83,10 @@ public class ReservaService extends ABaseService<Reserva> implements IReservaSer
         reservaRepository.save(reserva);
 
         mesaService.liberarMesa(reserva.getMesa().getId());
+    }
+
+    @Override
+    public Optional<Reserva> findByCodigo(String codigo) {
+        return reservaRepository.findByCodigo(codigo);
     }
 }

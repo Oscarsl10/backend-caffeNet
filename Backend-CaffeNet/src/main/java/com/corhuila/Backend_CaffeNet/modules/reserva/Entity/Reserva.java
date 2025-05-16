@@ -2,10 +2,12 @@ package com.corhuila.Backend_CaffeNet.modules.reserva.Entity;
 
 import com.corhuila.Backend_CaffeNet.common.base.ABaseEntity;
 import com.corhuila.Backend_CaffeNet.modules.mesa.Entity.Mesa;
+import com.corhuila.Backend_CaffeNet.modules.pago_reserva.Entity.PagoReserva;
 import com.corhuila.Backend_CaffeNet.modules.user.Entity.Users;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -25,11 +27,14 @@ public class Reserva extends ABaseEntity {
     @Column(name = "numero_personas", nullable = false)
     private Integer numero_personas;
 
+    @Column(name = "codigo", nullable = false)
+    private String codigo;
+
     @Column(name = "estado")
     private String estado = "Disponible";
 
     @Column(name = "precio")
-    private double precio;
+    private Double precio;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -56,11 +61,11 @@ public class Reserva extends ABaseEntity {
         this.users = users;
     }
 
-    public double getPrecio() {
-        return precio;
+    public Double getPrecio() {
+        return precio = calcularMontoR();
     }
 
-    public void setPrecio(double precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 
@@ -94,5 +99,24 @@ public class Reserva extends ABaseEntity {
 
     public String getEstado() {
         return estado;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public Double calcularMontoR() {
+        if (this.getFechaInicio() != null && this.getFechaFin() != null && this.getMesa() != null) {
+            long diferenciaMilisegundos = this.getFechaFin().getTime() - this.getFechaInicio().getTime();
+            double horas = diferenciaMilisegundos / (1000.0 * 60 * 60); // Duración en horas
+            double total = horas * this.getMesa().getPrecio(); // Usa el precio por hora de la mesa
+            return Double.valueOf(total);
+        } else {
+            return 0.0;
+        }
     }
 }

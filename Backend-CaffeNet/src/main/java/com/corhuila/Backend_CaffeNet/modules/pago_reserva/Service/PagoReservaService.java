@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -26,6 +27,11 @@ public class PagoReservaService extends ABaseService<PagoReserva> implements IPa
     public PagoReserva save(PagoReserva pagoReserva) {
         pagoReserva.calcularMontoDesdeReserva(); // Se calcula automáticamente el monto
         return PagoReservaRepository.save(pagoReserva);
+    }
+
+    @Override
+    public List<PagoReserva> findByReservaCodigo(String codigo) {
+        return PagoReservaRepository.findByReservaCodigo(codigo);
     }
 
 }

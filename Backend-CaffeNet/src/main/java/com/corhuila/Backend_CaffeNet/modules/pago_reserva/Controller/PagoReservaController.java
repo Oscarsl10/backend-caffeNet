@@ -9,12 +9,15 @@ import com.corhuila.Backend_CaffeNet.modules.producto.IService.IProductoService;
 import com.corhuila.Backend_CaffeNet.modules.reserva.Entity.Reserva;
 import com.corhuila.Backend_CaffeNet.modules.reserva.IRepository.IReservaRepository;
 import com.corhuila.Backend_CaffeNet.modules.reserva.Service.ReservaService;
+import com.corhuila.Backend_CaffeNet.modules.user.Entity.Users;
+import com.corhuila.Backend_CaffeNet.modules.user.IRepository.IUsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 
@@ -26,6 +29,8 @@ public class PagoReservaController extends ABaseController<PagoReserva, IPagoRes
     PagoReservaService pagoReservaService;
     @Autowired
     IReservaRepository reservaRepository;
+    @Autowired
+    IUsersRepository usersRepository;
 
     public PagoReservaController(IPagoReservaService service) {
         super(service, "Continent");
@@ -33,16 +38,24 @@ public class PagoReservaController extends ABaseController<PagoReserva, IPagoRes
 
     @PostMapping("/add")
     public ResponseEntity<PagoReserva> create(@RequestBody PagoReserva pagoReserva) {
-        // Obtener la reserva completa desde el repositorio usando el ID
         Reserva reserva = reservaRepository.findById(pagoReserva.getReserva().getId())
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
 
-        // Asignar la reserva y el monto al objeto de pago
+        Users usuario = usersRepository.findById(pagoReserva.getUsers().getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         pagoReserva.setReserva(reserva);
-        // Guardar el pago en la base de datos
+        pagoReserva.setUsers(usuario); // Aquí se asigna bien la relación
+
         PagoReserva nuevoPago = pagoReservaService.save(pagoReserva);
 
-        // Devolver el pago creado
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPago);
     }
+
+    @GetMapping("/by-codigo")
+    public ResponseEntity<List<PagoReserva>> getByReservaCodigo(@RequestParam String codigo) {
+        List<PagoReserva> list = pagoReservaService.findByReservaCodigo(codigo);
+        return ResponseEntity.ok(list);
+    }
+
 }

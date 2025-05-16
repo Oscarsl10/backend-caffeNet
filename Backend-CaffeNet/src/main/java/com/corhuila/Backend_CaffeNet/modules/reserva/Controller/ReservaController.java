@@ -5,6 +5,7 @@ import com.corhuila.Backend_CaffeNet.common.base.ABaseController;
 import com.corhuila.Backend_CaffeNet.modules.reserva.Entity.Reserva;
 import com.corhuila.Backend_CaffeNet.modules.reserva.Service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,5 +42,12 @@ public class ReservaController extends ABaseController<Reserva, IReservaService>
     public String finalizarReserva(@PathVariable Long id) {
         reservaService.finalizarReserva(id);
         return "Reserva finalizada y mesa liberada.";
+    }
+
+    @GetMapping("/by-codigo")
+    public ResponseEntity<Reserva> getByCodigo(@RequestParam String codigo) {
+        return reservaService.findByCodigo(codigo)
+                .map(res -> ResponseEntity.ok(res))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }

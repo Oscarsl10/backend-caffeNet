@@ -2,6 +2,7 @@ package com.corhuila.Backend_CaffeNet.modules.pago_reserva.Entity;
 
 import com.corhuila.Backend_CaffeNet.common.base.ABaseEntity;
 import com.corhuila.Backend_CaffeNet.modules.reserva.Entity.Reserva;
+import com.corhuila.Backend_CaffeNet.modules.user.Entity.Users;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -19,6 +20,10 @@ public class PagoReserva extends ABaseEntity {
     @ManyToOne
     @JoinColumn(name = "reserva_id", nullable = false)
     private Reserva reserva;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private Users users;
 
     public String getMetod_pago() {
         return metodo_pago;
@@ -50,6 +55,14 @@ public class PagoReserva extends ABaseEntity {
 
     public void setMetodo_pago(String metodo_pago) {
         this.metodo_pago = metodo_pago;
+    }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
     }
 
     public void calcularMontoDesdeReserva() {
