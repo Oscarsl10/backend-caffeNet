@@ -27,7 +27,7 @@ public class Reserva extends ABaseEntity {
     @Column(name = "numero_personas", nullable = false)
     private Integer numero_personas;
 
-    @Column(name = "codigo", nullable = false)
+    @Column(name = "codigo", nullable = false, unique = true)
     private String codigo;
 
     @Column(name = "estado")

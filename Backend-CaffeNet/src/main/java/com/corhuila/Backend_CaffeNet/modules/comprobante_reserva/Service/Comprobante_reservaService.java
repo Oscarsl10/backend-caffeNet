@@ -8,6 +8,8 @@ import com.corhuila.Backend_CaffeNet.modules.comprobante_reserva.IService.ICompr
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class Comprobante_reservaService extends ABaseService<Comprobante_reserva> implements IComprobante_reservaService {
 
@@ -17,5 +19,10 @@ public class Comprobante_reservaService extends ABaseService<Comprobante_reserva
     @Override
     protected IBaseRepository<Comprobante_reserva, Long> getRepository() {
         return comprobante_reservaRepository;
+    }
+
+    @Override
+    public Optional<Comprobante_reserva> findByPagoReservaId(Long pagoId) {
+        return comprobante_reservaRepository.findByPagoReservaId(pagoId);
     }
 }
