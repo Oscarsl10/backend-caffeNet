@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 @CrossOrigin(origins = "*")
 
 @RestController
@@ -23,15 +26,15 @@ public class ReservaController extends ABaseController<Reserva, IReservaService>
     }
 
     @PostMapping("/liberar")
-    public ResponseEntity<String> liberarMesasFinalizadas() {
+    public ResponseEntity<Map<String, String>> liberarMesasFinalizadas() {
         reservaService.liberarMesasReservasFinalizadas();
-        return ResponseEntity.ok("Mesas liberadas correctamente.");
+        return ResponseEntity.ok(Collections.singletonMap("message","Mesas liberadas correctamente."));
     }
 
     @PostMapping("/addReservation")
-    public String crearReserva(@RequestBody Reserva reserva) {
+    public ResponseEntity<Map<String,String>> crearReserva(@RequestBody Reserva reserva) {
         reservaService.crearReserva(reserva);
-        return "Reserva creada y mesa ocupada.";
+        return ResponseEntity.ok(Collections.singletonMap("message","Reserva creada y mesa ocupada."));
     }
 
     @PutMapping("/{id}/finalizar")

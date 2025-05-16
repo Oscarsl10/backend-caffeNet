@@ -51,10 +51,23 @@ public class ReservaService extends ABaseService<Reserva> implements IReservaSer
     public void crearReserva(Reserva reserva) {
         Long idMesa = reserva.getMesa().getId();
 
+        // 1) Obtener la mesa y validar capacidad
+        Mesa mesa = mesaRepository.findById(idMesa)
+                .orElseThrow(() -> new IllegalArgumentException("Mesa no encontrada"));
+
+        if (reserva.getNumero_personas() > mesa.getCapacidad()) {
+            throw new IllegalArgumentException(
+                    "El número de personas (" + reserva.getNumero_personas() +
+                            ") excede la capacidad de la mesa (" + mesa.getCapacidad() + ")."
+            );
+        }
+
+        // 2) Verificar disponibilidad
         if (!mesaService.estaDisponible(idMesa)) {
             throw new IllegalStateException("La mesa seleccionada está ocupada.");
         }
 
+        // 3) Crear reserva y ocupar mesa
         reserva.setEstado("ACTIVA");
         reservaRepository.save(reserva);
         mesaService.ocuparMesa(idMesa);
