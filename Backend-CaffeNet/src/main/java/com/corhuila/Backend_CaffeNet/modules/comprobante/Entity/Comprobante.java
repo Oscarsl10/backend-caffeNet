@@ -3,7 +3,6 @@ package com.corhuila.Backend_CaffeNet.modules.comprobante.Entity;
 import com.corhuila.Backend_CaffeNet.common.base.ABaseEntity;
 import com.corhuila.Backend_CaffeNet.modules.detalle_pedido.Entity.Detalle_Pedido;
 import com.corhuila.Backend_CaffeNet.modules.pago.Entity.Pago;
-import com.corhuila.Backend_CaffeNet.modules.pedido.Entity.Pedido;
 import com.corhuila.Backend_CaffeNet.modules.user.Entity.Users;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;

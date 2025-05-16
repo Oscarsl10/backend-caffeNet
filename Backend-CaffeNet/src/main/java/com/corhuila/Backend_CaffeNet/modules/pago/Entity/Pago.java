@@ -1,7 +1,7 @@
 package com.corhuila.Backend_CaffeNet.modules.pago.Entity;
 
 import com.corhuila.Backend_CaffeNet.common.base.ABaseEntity;
-import com.corhuila.Backend_CaffeNet.modules.pedido.Entity.Pedido;
+import com.corhuila.Backend_CaffeNet.modules.detalle_pedido.Entity.Detalle_Pedido;
 import com.corhuila.Backend_CaffeNet.modules.user.Entity.Users;
 import jakarta.persistence.*;
 
@@ -13,11 +13,11 @@ public class Pago extends ABaseEntity {
     private String metodo_Pago;
 
     @Column(name = "monto")
-    private String monto;
+    private Double monto;
 
     @ManyToOne
-    @JoinColumn(name = "pedido_id", nullable = false) // Clave foránea
-    private Pedido pedido;
+    @JoinColumn(name = "detalle_pedido_id", nullable = false) // Clave foránea
+    private Detalle_Pedido detalle_pedido;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -31,20 +31,12 @@ public class Pago extends ABaseEntity {
         this.metodo_Pago = metodo_Pago;
     }
 
-    public String getMonto() {
-        return monto;
+    public Double getMonto() {
+        return monto = detalle_pedido.getCarBuy().getTotal();
     }
 
-    public void setMonto(String monto) {
+    public void setMonto(Double monto) {
         this.monto = monto;
-    }
-
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
     }
 
     public Users getUsers() {
@@ -53,5 +45,13 @@ public class Pago extends ABaseEntity {
 
     public void setUsers(Users users) {
         this.users = users;
+    }
+
+    public Detalle_Pedido getDetalle_pedido() {
+        return detalle_pedido;
+    }
+
+    public void setDetalle_pedido(Detalle_Pedido detalle_pedido) {
+        this.detalle_pedido = detalle_pedido;
     }
 }

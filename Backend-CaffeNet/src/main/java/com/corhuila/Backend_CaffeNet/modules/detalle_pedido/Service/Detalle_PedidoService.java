@@ -5,10 +5,6 @@ import com.corhuila.Backend_CaffeNet.modules.detalle_pedido.Entity.Detalle_Pedid
 import com.corhuila.Backend_CaffeNet.modules.detalle_pedido.IService.IDetalle_PedidoService;
 import com.corhuila.Backend_CaffeNet.common.base.IBaseRepository;
 import com.corhuila.Backend_CaffeNet.modules.detalle_pedido.IRepository.IDetalle_PedidoRepository;
-import com.corhuila.Backend_CaffeNet.modules.pedido.Entity.Pedido;
-import com.corhuila.Backend_CaffeNet.modules.pedido.IRepository.IPedidoRepository;
-import com.corhuila.Backend_CaffeNet.modules.producto.Entity.Producto;
-import com.corhuila.Backend_CaffeNet.modules.producto.IRepository.IProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
