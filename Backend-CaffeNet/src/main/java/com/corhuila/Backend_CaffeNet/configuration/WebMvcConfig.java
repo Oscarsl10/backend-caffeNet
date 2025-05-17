@@ -13,6 +13,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOriginPatterns(
                         "http://localhost:*",
                         "https://localhost:*",
+                        "http://localhost:8100",
                         "capacitor://localhost"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
