@@ -16,17 +16,15 @@ public class CorsGlobalConfig {
 
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
 
-        // Aquí especifica el origen que realmente vas a usar
-        config.setAllowedOrigins(Arrays.asList("https://localhost"));  // o "http://localhost:4200", etc.
-
-        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowCredentials(true); // Necesario para cookies/autenticación
+        config.setAllowedOrigins(Arrays.asList("https://localhost")); //  O especifica "capacitor://localhost" si usas app móvil
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setExposedHeaders(Arrays.asList("Authorization")); // opcional
 
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
