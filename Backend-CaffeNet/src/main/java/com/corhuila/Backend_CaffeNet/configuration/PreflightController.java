@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PreflightController {
 
-    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
-    public ResponseEntity<Void> handle() {
+    @RequestMapping(
+            path = "/**",
+            method = RequestMethod.OPTIONS
+    )
+    public ResponseEntity<Void> preflight() {
+        // Devuelve 200 OK y deja que el filtro CORS inyecte las cabeceras
         return ResponseEntity.ok().build();
     }
 }
