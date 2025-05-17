@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -14,23 +15,19 @@ import java.util.Collections;
 public class CorsGlobalConfig {
 
     @Bean
-    public FilterRegistrationBean<CorsFilter> corsFilter() {
-        // Origen de la configuración CORS
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        // Configuración de CORS
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);                       // Permitir credenciales (cookies, headers, etc.)
-        config.setAllowedOriginPatterns(Collections.singletonList("*")); // Cualquier dominio y cualquier puerto
-        config.setAllowedHeaders(Collections.singletonList("*"));        // Todos los headers permitidos
-        config.setAllowedMethods(Collections.singletonList("*"));        // Todos los métodos HTTP permitidos
 
-        // Aplica esta configuración a todos los endpoints
+        // Permite TODO orígenes, headers, métodos y credenciales
+        config.setAllowedOriginPatterns(Collections.singletonList("*"));
+        config.setAllowedMethods(Collections.singletonList("*"));
+        config.setAllowedHeaders(Collections.singletonList("*"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+
+        // Se aplica a todas las rutas
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
-        // Registra el filtro CORS con la prioridad más alta
-        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return bean;
+        return source;
     }
 }
