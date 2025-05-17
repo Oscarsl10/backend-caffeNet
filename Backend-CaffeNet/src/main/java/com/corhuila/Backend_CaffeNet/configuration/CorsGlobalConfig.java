@@ -8,25 +8,27 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Collections;
+
 @Configuration
 public class CorsGlobalConfig {
 
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilter() {
-        // 1. Defino la fuente de configuración CORS
+        // Origen de la configuración CORS
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        // 2. Configuro la política
+        // Configuración de CORS
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);               // Permite cookies/credenciales
-        config.addAllowedOriginPattern("http://localhost:8100");   // Acepta dominio del frontend
-        config.addAllowedHeader("*");                   // Acepta cualquier header
-        config.addAllowedMethod("*");                   // Acepta cualquier método (GET, POST, etc.)
+        config.setAllowCredentials(true);                       // Permitir credenciales (cookies, headers, etc.)
+        config.setAllowedOriginPatterns(Collections.singletonList("*")); // Cualquier dominio y cualquier puerto
+        config.setAllowedHeaders(Collections.singletonList("*"));        // Todos los headers permitidos
+        config.setAllowedMethods(Collections.singletonList("*"));        // Todos los métodos HTTP permitidos
 
-        // 3. Aplico la config a todos los endpoints
+        // Aplica esta configuración a todos los endpoints
         source.registerCorsConfiguration("/**", config);
 
-        // 4. Registro el filtro con máxima prioridad (orden HIGHEST_PRECEDENCE)
+        // Registra el filtro CORS con la prioridad más alta
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
