@@ -26,7 +26,7 @@ public class CarBuy extends ABaseEntity {
     @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
-    
+
     public EstadoCarrito getEstado() {
         return estado;
     }
