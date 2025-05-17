@@ -15,9 +15,6 @@ public class CarBuy extends ABaseEntity {
 
     }
 
-    @Column(name = "fecha_creacion")
-    private LocalDateTime fecha_creacion;
-
     @Column(name = "estado")
     @Enumerated(EnumType.STRING)
     private EstadoCarrito estado;
@@ -33,15 +30,6 @@ public class CarBuy extends ABaseEntity {
     @JoinColumn(name = "user_id")
     private Users users;
 
-
-
-    public LocalDateTime getFecha_creacion() {
-        return fecha_creacion;
-    }
-
-    public void setFecha_creacion(LocalDateTime fecha_creacion) {
-        this.fecha_creacion = fecha_creacion;
-    }
 
     public EstadoCarrito getEstado() {
         return estado;
