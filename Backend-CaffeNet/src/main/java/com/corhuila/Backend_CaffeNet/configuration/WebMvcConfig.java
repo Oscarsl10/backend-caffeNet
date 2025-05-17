@@ -11,10 +11,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns(
+                        "http://localhost",
                         "http://localhost:*",
+                        "https://localhost",
                         "https://localhost:*",
-                        "http://localhost:8100",
-                        "capacitor://localhost"
+                        "capacitor://localhost",
+                        "http://localhost:8100"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
