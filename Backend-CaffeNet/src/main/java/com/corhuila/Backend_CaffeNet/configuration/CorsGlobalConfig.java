@@ -16,28 +16,28 @@ public class CorsGlobalConfig {
 
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilter() {
+        // Fuente de configuración CORS
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        // Configuración de CORS
         CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);  // Necesario para cookies/autenticación
 
-        // ✅ Permitir credenciales (cookies, sesiones)
-        config.setAllowCredentials(true);
-
-        // ✅ Orígenes permitidos (incluye el que aparece en tu error: https://localhost)
+        // SOLO orígenes explícitos (¡sin asterisco!)
         config.setAllowedOrigins(Arrays.asList(
-                "https://localhost",           // navegador con HTTPS (tu caso)
-                "http://localhost",            // navegador sin HTTPS
-                "capacitor://localhost"        // apps móviles nativas
+                "http://localhost",
+                "https://localhost",
+                "capacitor://localhost",
+                "http://localhost:8100"  // si usas Angular local
         ));
 
-        // ✅ Métodos y headers
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("*"));
-        config.setExposedHeaders(Arrays.asList("Authorization"));
+        config.setAllowedHeaders(Collections.singletonList("*"));   // Permitir todos los headers
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
 
-        // ✅ Aplica a todos los endpoints
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Aplicar config a todos los endpoints
         source.registerCorsConfiguration("/**", config);
 
-        // ✅ Registrar el filtro con prioridad alta
+        // Registrar el filtro
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
