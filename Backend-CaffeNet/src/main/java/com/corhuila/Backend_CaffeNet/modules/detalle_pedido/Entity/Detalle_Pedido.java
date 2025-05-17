@@ -55,4 +55,12 @@ public class Detalle_Pedido extends ABaseEntity {
     public void setCarBuy(CarBuy carBuy) {
         this.carBuy = carBuy;
     }
+
+    public Date getFecha_emision() {
+        return fecha_emision;
+    }
+
+    public void setFecha_emision(Date fecha_emision) {
+        this.fecha_emision = fecha_emision;
+    }
 }
