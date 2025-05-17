@@ -23,14 +23,10 @@ public class CarBuy extends ABaseEntity {
     private double total;
 
     @ManyToOne
-    @JoinColumn(name = "producto_id")
+    @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Users users;
-
-
+    
     public EstadoCarrito getEstado() {
         return estado;
     }
@@ -53,14 +49,6 @@ public class CarBuy extends ABaseEntity {
 
     public void setTotal(double total) {
         this.total = total;
-    }
-
-    public Users getUsers() {
-        return users;
-    }
-
-    public void setUsers(Users users) {
-        this.users = users;
     }
 
 }
