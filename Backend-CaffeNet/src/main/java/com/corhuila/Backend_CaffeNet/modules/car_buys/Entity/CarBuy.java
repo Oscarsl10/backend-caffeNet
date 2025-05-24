@@ -29,9 +29,6 @@ public class CarBuy extends ABaseEntity {
     @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
 
     public EstadoCarrito getEstado() {
         return estado;
@@ -63,14 +60,6 @@ public class CarBuy extends ABaseEntity {
 
     public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
-    }
-
-    public Users getUser() {
-        return user;
-    }
-
-    public void setUser(Users user) {
-        this.user = user;
     }
 }
 
