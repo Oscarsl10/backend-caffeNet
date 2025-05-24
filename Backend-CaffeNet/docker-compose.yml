@@ -6,7 +6,7 @@ services:
     build: .           # Construye la imagen localmente desde el Dockerfile en este directorio
     image: backendcaffenet        # Nombre de la imagen local construida
     ports:
-      - "8090:8082"     # Puerto mapeado (8090 en el host, 8082 en el contenedor)
+      - "9000:8082"     # Puerto mapeado (8090 en el host, 8082 en el contenedor)
     depends_on:
       - mysql-db         # Asegura que el contenedor de base de datos se inicie primero
     environment:
